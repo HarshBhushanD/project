@@ -152,8 +152,8 @@
 // export default SuperAdminDashboard;
 
 import React, { useState, useEffect } from 'react';
-import { collection, getDocs, updateDoc, doc, onSnapshot } from 'firebase/firestore';
-import { db,auth } from './firebase';
+import { collection, updateDoc, doc, onSnapshot } from 'firebase/firestore';
+import { db } from './firebase';
 import { Search, Users, Shield, Award } from 'lucide-react';
 import Navbar from './navbar';
 
