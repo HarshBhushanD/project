@@ -166,7 +166,7 @@
 
 // export default SignupPage;
 import React, { useState } from 'react';
-import { Mail, Lock, Loader2, User } from 'lucide-react';
+import { Mail, Lock, Loader2, User, Building2, Briefcase } from 'lucide-react';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore'; // Import Firestore functions
 import { auth, db } from './firebase'; // Import db for Firestore
@@ -176,6 +176,8 @@ import Navbar from './navbar';
 const SignupPage = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [companyName, setCompanyName] = useState('');
+  const [role, setRole] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
@@ -211,9 +213,11 @@ const SignupPage = () => {
 
       await setDoc(doc(db, 'users', user.uid), {
         uid: user.uid,
-        name: name || null, // Store the name or null if not provided
+        name: name || null,
         email: user.email,
-        createdAt: new Date().toISOString(), // Save the creation timestamp
+        companyName: companyName.trim() || null,
+        role: role.trim() || null,
+        createdAt: new Date().toISOString(),
       });
 
       console.log('User created and data saved to Firestore:', user);
@@ -264,6 +268,28 @@ const SignupPage = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+              />
+            </div>
+
+            <div className="relative">
+              <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Company Name"
+                value={companyName}
+                onChange={(e) => setCompanyName(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+              />
+            </div>
+
+            <div className="relative">
+              <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Role in Company"
+                value={role}
+                onChange={(e) => setRole(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
               />
             </div>
