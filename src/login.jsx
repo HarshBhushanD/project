@@ -24,7 +24,7 @@ const Login = () => {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       console.log('Logged in user:', userCredential.user);
-      navigate('/dashboard'); // Redirect to dashboard after successful login
+      navigate('/dashboard'); 
     } catch (err) {
       console.error('Login error:', err);
       setError(

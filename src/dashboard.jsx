@@ -157,7 +157,6 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Quick Actions */}
         <div className="mt-8 flex justify-end">
           <button
             onClick={() => navigate('/projects')}
