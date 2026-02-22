@@ -506,14 +506,16 @@
 
 
 import React, { useState, useEffect } from 'react';
-import { db } from './firebase';
-import { collection, getDocs, addDoc, deleteDoc, doc, query, orderBy, where, updateDoc } from 'firebase/firestore';
+import { db, auth } from './firebase';
+import { onAuthStateChanged } from 'firebase/auth';
+import { collection, getDocs, addDoc, deleteDoc, doc, query, orderBy, where, updateDoc, getDoc } from 'firebase/firestore';
 import { Loader2, Plus, Trash2, FolderOpen, Users, CheckCircle2, XCircle } from 'lucide-react';
 import Navbar from './navbar';
 
 const ProjectsPage = () => {
   const [projects, setProjects] = useState([]);
   const [users, setUsers] = useState([]);
+  const [userCompanyName, setUserCompanyName] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [isAddingProject, setIsAddingProject] = useState(false);
@@ -538,8 +540,30 @@ const ProjectsPage = () => {
   });
 
   useEffect(() => {
-    fetchProjects();
-    fetchUsers();
+    let mounted = true;
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (!mounted) return;
+      if (!user) {
+        setLoading(false);
+        return;
+      }
+      try {
+        const userSnap = await getDoc(doc(db, 'users', user.uid));
+        const companyName = userSnap.exists() ? (userSnap.data().companyName || null) : null;
+        if (mounted) setUserCompanyName(companyName);
+        await fetchUsers(companyName);
+        await fetchProjects(companyName);
+      } catch (err) {
+        console.error('Error loading user or data:', err);
+        if (mounted) setError('Failed to load data');
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    });
+    return () => {
+      mounted = false;
+      unsubscribe();
+    };
   }, []);
 
   useEffect(() => {
@@ -548,32 +572,52 @@ const ProjectsPage = () => {
     }
   }, [selectedProject]);
 
-  const fetchUsers = async () => {
+  const fetchUsers = async (companyName) => {
     try {
       const querySnapshot = await getDocs(collection(db, 'users'));
-      const usersData = querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
+      let usersData = querySnapshot.docs.map(d => ({
+        id: d.id,
+        ...d.data()
       }));
+      if (companyName) {
+        usersData = usersData.filter(u => (u.companyName || '').trim() === companyName.trim());
+      }
       setUsers(usersData);
     } catch (err) {
       console.error('Error fetching users:', err);
     }
   };
 
-  const fetchProjects = async () => {
+  const fetchProjects = async (companyName) => {
     try {
-      const q = query(collection(db, 'projects'), orderBy('createdAt', 'desc'));
+      let q;
+      if (companyName && companyName.trim()) {
+        q = query(
+          collection(db, 'projects'),
+          where('companyName', '==', companyName.trim()),
+          orderBy('createdAt', 'desc')
+        );
+      } else {
+        q = query(collection(db, 'projects'), orderBy('createdAt', 'desc'));
+      }
       const querySnapshot = await getDocs(q);
-      const projectsData = querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
+      const projectsData = querySnapshot.docs.map(d => ({
+        id: d.id,
+        ...d.data()
       }));
-      setProjects(projectsData);
+      if (companyName && companyName.trim()) {
+        setProjects(projectsData);
+      } else {
+        setProjects([]);
+      }
       setError('');
     } catch (err) {
       console.error('Error fetching projects:', err);
-      setError('Failed to load projects');
+      if (err.code === 'firestore/index-not-found' || err.message?.includes('index')) {
+        setError('Projects index is being set up. Please try again in a moment or create the Firestore index for companyName + createdAt.');
+      } else {
+        setError('Failed to load projects');
+      }
     } finally {
       setLoading(false);
     }
@@ -600,24 +644,29 @@ const ProjectsPage = () => {
   const handleAddProject = async (e) => {
     e.preventDefault();
     if (!newProject.name.trim() || !newProject.leadId || !newProject.assignedTo) return;
+    if (!userCompanyName || !userCompanyName.trim()) {
+      setError('Your account has no company set. Please update your profile with a company name to create projects.');
+      return;
+    }
 
     setLoading(true);
     try {
-      const docRef = await addDoc(collection(db, 'projects'), {
+      const projectData = {
         name: newProject.name,
         description: newProject.description,
         leadId: newProject.leadId,
         assignedTo: newProject.assignedTo,
         members: newProject.members,
+        companyName: userCompanyName.trim(),
         createdAt: new Date().toISOString(),
         status: 'active'
-      });
+      };
+      const docRef = await addDoc(collection(db, 'projects'), projectData);
       
       setProjects([{
         id: docRef.id,
         ...newProject,
-        createdAt: new Date().toISOString(),
-        status: 'active'
+        ...projectData
       }, ...projects]);
       
       setNewProject({
@@ -715,7 +764,7 @@ const ProjectsPage = () => {
 
   const getUserName = (userId) => {
     const user = users.find(u => u.uid === userId);
-    return user ? user.displayName || user.email : 'Unknown User';
+    return user ? (user.name || user.email) : 'Unknown User';
   };
 
   if (loading && projects.length === 0) {
@@ -737,12 +786,19 @@ const ProjectsPage = () => {
             {error}
           </div>
         )}
+
+        {!loading && userCompanyName === null && (
+          <div className="bg-amber-50 text-amber-800 p-4 rounded-md mb-4">
+            Your account has no company set. You can only view and create projects after your profile includes a company name.
+          </div>
+        )}
         
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-semibold text-gray-900">Projects</h1>
           <button
             onClick={() => setIsAddingProject(true)}
-            className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+            disabled={!userCompanyName || !userCompanyName.trim()}
+            className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Plus className="h-5 w-5 mr-2" />
             New Project
@@ -783,7 +839,7 @@ const ProjectsPage = () => {
                     <option value="">Select Lead</option>
                     {users.map(user => (
                       <option key={user.uid} value={user.uid}>
-                        {user.displayName || user.email}
+                        {user.name || user.email}
                       </option>
                     ))}
                   </select>
@@ -799,7 +855,7 @@ const ProjectsPage = () => {
                     <option value="">Select User</option>
                     {users.map(user => (
                       <option key={user.uid} value={user.uid}>
-                        {user.displayName || user.email}
+                        {user.name || user.email}
                       </option>
                     ))}
                   </select>
