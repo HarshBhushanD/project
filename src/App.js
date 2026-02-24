@@ -79,54 +79,12 @@ function App(){
       <Route path="/superadmin" element={<SuperAdminDashboard />} />
       <Route path="/signup" element={<SignupPage />} />
       <Route path="/project" element={ <AdminRoute allowLead><ProjectsPage /></AdminRoute>}/>
-        <Route
-          path="/signup"
-          element={
-            <PublicRoute>
-              <SignupPage />
-            </PublicRoute>
-          }
-        />
-        <Route
-          path="/"
-          element={
-            <PublicRoute>
-              <Login />
-            </PublicRoute>
-          }
-        />
-        <Route
-          path="/leave"
-          element={
-            <ProtectedRoute>
-              <LeaveApplicationPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/admin"
-          element={
-            <AdminRoute>
-              <AdminPage />
-            </AdminRoute>
-          }
-        />
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/superadmin"
-          element={
-            <SuperAdminRoute>
-              <RoleBasedDashboard />
-            </SuperAdminRoute>
-          }
-        />
+      <Route  path="/signup" element={ <PublicRoute> <SignupPage /></PublicRoute>}/>
+      <Route path="/"element={ <PublicRoute> <Login /></PublicRoute>} />
+      <Route path="/leave" element={<ProtectedRoute> <LeaveApplicationPage /></ProtectedRoute>} />
+      <Route path="/admin" element={ <AdminRoute> <AdminPage /> </AdminRoute>}/>
+      <Route path="/dashboard" element={ <ProtectedRoute> <Dashboard /> </ProtectedRoute> }/>
+      <Route path="/superadmin" element={ <SuperAdminRoute> <RoleBasedDashboard /></SuperAdminRoute>}/>
     </Routes>
    </BrowserRouter>
     )
