@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { db } from './firebase';
-import { collection, getDocs } from 'firebase/firestore';
+import { db, auth } from './firebase';
+import { onAuthStateChanged } from 'firebase/auth';
+import { collection, getDocs, doc, getDoc, query, where, orderBy } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 import { 
   FolderOpen, 
@@ -18,22 +19,54 @@ const Dashboard = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchProjects();
+    let mounted = true;
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (!mounted || !user) {
+        if (!user && mounted) setLoading(false);
+        return;
+      }
+      try {
+        const userSnap = await getDoc(doc(db, 'users', user.uid));
+        const companyName = userSnap.exists() ? (userSnap.data().companyName || null) : null;
+        await fetchProjects(companyName);
+      } catch (err) {
+        console.error('Error loading dashboard:', err);
+        if (mounted) setError('Failed to load dashboard data');
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    });
+    return () => {
+      mounted = false;
+      unsubscribe();
+    };
   }, []);
 
-  const fetchProjects = async () => {
+  const fetchProjects = async (companyName) => {
     try {
-      const querySnapshot = await getDocs(collection(db, 'projects'));
-      const projectsData = querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
+      if (!companyName || !companyName.trim()) {
+        setProjects([]);
+        return;
+      }
+      const q = query(
+        collection(db, 'projects'),
+        where('companyName', '==', companyName.trim()),
+        orderBy('createdAt', 'desc')
+      );
+      const querySnapshot = await getDocs(q);
+      const projectsData = querySnapshot.docs.map(d => ({
+        id: d.id,
+        ...d.data()
       }));
       setProjects(projectsData);
     } catch (err) {
       console.error('Error fetching projects:', err);
-      setError('Failed to load dashboard data');
-    } finally {
-      setLoading(false);
+      if (err.code === 'firestore/index-not-found' || err.message?.includes('index')) {
+        setError('Dashboard index is being set up. Please try again in a moment.');
+      } else {
+        setError('Failed to load dashboard data');
+      }
+      setProjects([]);
     }
   };
 
