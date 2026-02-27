@@ -8,8 +8,11 @@
     "lucide-react": "^0.471.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-player": "^3.4.0",
     "react-router-dom": "^7.1.2",
     "react-scripts": "5.0.1",
+    "socket.io": "^4.8.3",
+    "socket.io-client": "^4.8.3",
     "web-vitals": "^4.2.4"
   },
   "scripts": {
