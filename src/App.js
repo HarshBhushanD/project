@@ -13,6 +13,8 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { getDoc, doc } from 'firebase/firestore';
 import { auth, db } from './firebase';
 // import { LoadingSpinner } from './loading';
+import Lobby from './lobby';
+import Room from './room';  
 
 
 
@@ -85,6 +87,8 @@ function App(){
       <Route path="/admin" element={ <AdminRoute> <AdminPage /> </AdminRoute>}/>
       <Route path="/dashboard" element={ <ProtectedRoute> <Dashboard /> </ProtectedRoute> }/>
       <Route path="/superadmin" element={ <SuperAdminRoute> <RoleBasedDashboard /></SuperAdminRoute>}/>
+      <Route path="/lobby" element={<Lobby />} />
+      <Route path="/room/:roomId" element={<Room />} />
     </Routes>
    </BrowserRouter>
     )
