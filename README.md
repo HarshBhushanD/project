@@ -1,4 +1,4 @@
-# Getting Started with Create React App similar to jira and zoom and leave application
+# Getting Started with Create React App similar to jira and zoom and leave application end to end secured one stop enterprise solution
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
