@@ -1,11 +1,12 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { LayoutDashboard, FolderKanban, LogOut } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { LayoutDashboard, FolderKanban, LogOut, Users, CalendarDays, Shield } from 'lucide-react';
 import { signOut } from 'firebase/auth';
 import { auth } from './firebase';
 
 const Navbar = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleSignOut = async () => {
     try {
@@ -26,6 +27,26 @@ const Navbar = () => {
       name: 'Projects',
       icon: <FolderKanban className="h-5 w-5" />,
       path: '/projects'
+    },
+    {
+      name: 'Users',
+      icon: <Users className="h-5 w-5" />,
+      path: '/users'
+    },
+    {
+      name: 'Leave',
+      icon: <CalendarDays className="h-5 w-5" />,
+      path: '/leave'
+    },
+    {
+      name: 'Admin',
+      icon: <Shield className="h-5 w-5" />,
+      path: '/admin'
+    },
+    {
+      name: 'Super Admin',
+      icon: <Shield className="h-5 w-5" />,
+      path: '/superadmin'
     }
   ];
 
@@ -42,7 +63,10 @@ const Navbar = () => {
           <button
             key={item.name}
             onClick={() => navigate(item.path)}
-            className="w-full flex items-center space-x-3 px-3 py-2 rounded-md text-gray-700 hover:bg-gray-100 hover:text-blue-600 transition-colors text-left"
+            className={`w-full flex items-center space-x-3 px-3 py-2 rounded-md text-left transition-colors
+              ${location.pathname.startsWith(item.path)
+                ? 'bg-blue-50 text-blue-700'
+                : 'text-gray-700 hover:bg-gray-100 hover:text-blue-600'}`}
           >
             {item.icon}
             <span>{item.name}</span>

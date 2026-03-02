@@ -82,7 +82,7 @@ const Dashboard = () => {
     return (
       <>
         <Navbar />
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center pl-64">
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center ml-64">
           <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
         </div>
       </>
@@ -97,7 +97,7 @@ const Dashboard = () => {
   return (
   <>
   <Navbar/>
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-8 pl-64">
+    <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-8 ml-64">
       <div className="max-w-7xl mx-auto">
         {/* Dashboard Header */}
         <div className="mb-8">
