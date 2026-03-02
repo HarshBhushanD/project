@@ -1,11 +1,10 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LayoutDashboard, FolderKanban, LogOut, Menu, X } from 'lucide-react';
+import { LayoutDashboard, FolderKanban, LogOut } from 'lucide-react';
 import { signOut } from 'firebase/auth';
 import { auth } from './firebase';
 
 const Navbar = () => {
-  const [isOpen, setIsOpen] = React.useState(false);
   const navigate = useNavigate();
 
   const handleSignOut = async () => {
@@ -31,81 +30,36 @@ const Navbar = () => {
   ];
 
   return (
-    <nav className="bg-white shadow-lg">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
-          {/* Logo/Brand */}
-          <div className="flex-shrink-0 flex items-center">
-            <h1 className="text-xl font-bold text-red-600">Developers Cohort</h1>
-          </div>
-
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-4">
-            {navItems.map((item) => (
-              <button
-                key={item.name}
-                onClick={() => navigate(item.path)}
-                className="flex items-center space-x-2 px-3 py-2 rounded-md text-gray-700 hover:bg-gray-100 hover:text-blue-600 transition-colors"
-              >
-                {item.icon}
-                <span>{item.name}</span>
-              </button>
-            ))}
-            <button
-              onClick={handleSignOut}
-              className="flex items-center space-x-2 px-3 py-2 text-red-600 hover:bg-red-50 rounded-md transition-colors"
-            >
-              <LogOut className="h-5 w-5" />
-              <span>Sign Out</span>
-            </button>
-          </div>
-
-          {/* Mobile menu button */}
-          <div className="md:hidden flex items-center">
-            <button
-              onClick={() => setIsOpen(!isOpen)}
-              className="text-gray-700 hover:text-blue-600 focus:outline-none"
-            >
-              {isOpen ? (
-                <X className="h-6 w-6" />
-              ) : (
-                <Menu className="h-6 w-6" />
-              )}
-            </button>
-          </div>
-        </div>
+    <nav className="fixed inset-y-0 left-0 w-64 bg-white shadow-lg flex flex-col z-50">
+      {/* Logo/Brand */}
+      <div className="h-16 flex items-center px-6 border-b">
+        <h1 className="text-xl font-bold text-red-600">Developers Cohort</h1>
       </div>
 
-      {/* Mobile Navigation */}
-      {isOpen && (
-        <div className="md:hidden">
-          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-            {navItems.map((item) => (
-              <button
-                key={item.name}
-                onClick={() => {
-                  navigate(item.path);
-                  setIsOpen(false);
-                }}
-                className="flex items-center space-x-2 w-full px-3 py-2 rounded-md text-gray-700 hover:bg-gray-100 hover:text-blue-600 transition-colors"
-              >
-                {item.icon}
-                <span>{item.name}</span>
-              </button>
-            ))}
-            <button
-              onClick={() => {
-                handleSignOut();
-                setIsOpen(false);
-              }}
-              className="flex items-center space-x-2 w-full px-3 py-2 text-red-600 hover:bg-red-50 rounded-md transition-colors"
-            >
-              <LogOut className="h-5 w-5" />
-              <span>Sign Out</span>
-            </button>
-          </div>
-        </div>
-      )}
+      {/* Navigation items */}
+      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-1">
+        {navItems.map((item) => (
+          <button
+            key={item.name}
+            onClick={() => navigate(item.path)}
+            className="w-full flex items-center space-x-3 px-3 py-2 rounded-md text-gray-700 hover:bg-gray-100 hover:text-blue-600 transition-colors text-left"
+          >
+            {item.icon}
+            <span>{item.name}</span>
+          </button>
+        ))}
+      </div>
+
+      {/* Sign out button at bottom */}
+      <div className="border-t px-4 py-4">
+        <button
+          onClick={handleSignOut}
+          className="w-full flex items-center justify-start space-x-3 px-3 py-2 text-red-600 hover:bg-red-50 rounded-md transition-colors"
+        >
+          <LogOut className="h-5 w-5" />
+          <span>Sign Out</span>
+        </button>
+      </div>
     </nav>
   );
 };

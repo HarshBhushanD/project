@@ -13,8 +13,8 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { getDoc, doc } from 'firebase/firestore';
 import { auth, db } from './firebase';
 // import { LoadingSpinner } from './loading';
-import LobbyScreen from './screens/Lobby';
-import RoomScreen from './screens/Room';  
+import Lobby from './screens/Lobby';
+import Room from './screens/Room';  
 
 
 

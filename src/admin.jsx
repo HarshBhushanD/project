@@ -4,6 +4,7 @@ import { collection, query, getDocs, updateDoc, doc } from 'firebase/firestore';
 import { signOut } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import { LogOut } from 'lucide-react';
+import Navbar from './navbar';
 
 const AdminDashboard = () => {
   const [leaves, setLeaves] = useState([]);
@@ -111,7 +112,8 @@ const AdminDashboard = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow">
+      <Navbar />
+      <header className="bg-white shadow pl-64">
         <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8 flex justify-between items-center">
           <h1 className="text-3xl font-bold text-gray-900">Leave Management Dashboard</h1>
           <button
@@ -124,7 +126,7 @@ const AdminDashboard = () => {
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8 pl-64">
         <div className="flex space-x-4 mb-6 border-b">
           {tabs.map(tab => (
             <button

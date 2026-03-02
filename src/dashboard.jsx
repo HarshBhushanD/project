@@ -16,6 +16,7 @@ const Dashboard = () => {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -79,18 +80,24 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
-      </div>
+      <>
+        <Navbar />
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center pl-64">
+          <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+        </div>
+      </>
     );
   }
 
   const stats = getProjectStats();
+  const filteredProjects = statusFilter === 'all' 
+    ? projects 
+    : projects.filter(p => p.status === statusFilter);
 
   return (
   <>
   <Navbar/>
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-8">
+    <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-8 pl-64">
       <div className="max-w-7xl mx-auto">
         {/* Dashboard Header */}
         <div className="mb-8">
@@ -139,16 +146,50 @@ const Dashboard = () => {
 
         {/* Recent Projects */}
         <div className="bg-white rounded-lg shadow">
-          <div className="px-6 py-4 border-b border-gray-200">
+          <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
             <h2 className="text-lg font-medium text-gray-900">Recent Projects</h2>
+            <div className="flex space-x-2 text-sm">
+              <button
+                onClick={() => setStatusFilter('all')}
+                className={`px-3 py-1 rounded-full border ${
+                  statusFilter === 'all'
+                    ? 'bg-blue-50 text-blue-700 border-blue-200'
+                    : 'text-gray-600 border-gray-200 hover:bg-gray-50'
+                }`}
+              >
+                All
+              </button>
+              <button
+                onClick={() => setStatusFilter('active')}
+                className={`px-3 py-1 rounded-full border ${
+                  statusFilter === 'active'
+                    ? 'bg-yellow-50 text-yellow-700 border-yellow-200'
+                    : 'text-gray-600 border-gray-200 hover:bg-gray-50'
+                }`}
+              >
+                Active
+              </button>
+              <button
+                onClick={() => setStatusFilter('completed')}
+                className={`px-3 py-1 rounded-full border ${
+                  statusFilter === 'completed'
+                    ? 'bg-green-50 text-green-700 border-green-200'
+                    : 'text-gray-600 border-gray-200 hover:bg-gray-50'
+                }`}
+              >
+                Completed
+              </button>
+            </div>
           </div>
           <div className="divide-y divide-gray-200">
-            {projects.length === 0 ? (
+            {filteredProjects.length === 0 ? (
               <div className="p-6 text-center text-gray-500">
-                No projects found. Create your first project to get started.
+                {projects.length === 0
+                  ? 'No projects found. Create your first project to get started.'
+                  : 'No projects match this filter.'}
               </div>
             ) : (
-              projects.map(project => (
+              filteredProjects.map(project => (
                 <div 
                   key={project.id}
                   className="p-6 hover:bg-gray-50 transition-colors cursor-pointer"

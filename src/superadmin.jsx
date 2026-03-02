@@ -263,16 +263,19 @@ const RoleBasedDashboard = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-      </div>
+      <>
+        <Navbar />
+        <div className="flex items-center justify-center h-64 pl-64">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+        </div>
+      </>
     );
   }
 
   return (
-    <>
-    <Navbar/>
-    <div className="p-6 max-w-6xl mx-auto space-y-6">
+  <>
+  <Navbar/>
+    <div className="p-6 max-w-6xl mx-auto space-y-6 pl-64">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">User Management Dashboard</h1>
         <div className="flex space-x-2">

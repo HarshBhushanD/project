@@ -481,6 +481,7 @@ import React, { useState, useEffect } from 'react';
 import { auth, db } from './firebase';
 import { collection, addDoc, query, where, getDocs } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
+import Navbar from './navbar';
 
 const Alert = ({ children, variant = 'default', className = '' }) => {
   const baseStyles = "p-4 rounded-md mb-4";
@@ -707,7 +708,8 @@ const LeaveApplicationPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4">
-      <div className="max-w-2xl mx-auto">
+      <Navbar />
+      <div className="max-w-2xl mx-auto pl-64">
         <div className="bg-white rounded-lg shadow-md p-8">
           <h2 className="text-2xl font-bold mb-6">Apply for Leave</h2>
 

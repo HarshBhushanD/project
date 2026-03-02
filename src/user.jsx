@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { collection, query, onSnapshot } from 'firebase/firestore';
 import { db } from './firebase';
+import Navbar from './navbar';
 
 const UsersList = () => {
   const [users, setUsers] = useState([]);
@@ -36,14 +37,19 @@ const UsersList = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-      </div>
+      <>
+        <Navbar />
+        <div className="flex justify-center items-center h-screen pl-64">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+        </div>
+      </>
     );
   }
 
   return (
-    <div className="p-6">
+    <>
+    <Navbar />
+    <div className="p-6 pl-64">
       <div className="max-w-6xl mx-auto">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">User Management Dashboard</h1>
@@ -123,6 +129,7 @@ const UsersList = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 
