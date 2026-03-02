@@ -1,12 +1,35 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { LayoutDashboard, FolderKanban, LogOut, Users, CalendarDays, Shield } from 'lucide-react';
-import { signOut } from 'firebase/auth';
-import { auth } from './firebase';
+import { signOut, onAuthStateChanged } from 'firebase/auth';
+import { auth, db } from './firebase';
+import { doc, getDoc } from 'firebase/firestore';
 
 const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const [userRole, setUserRole] = useState(null);
+  const [userEmail, setUserEmail] = useState(null);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        setUserRole(null);
+        setUserEmail(null);
+        return;
+      }
+      setUserEmail(user.email || null);
+      try {
+        const snap = await getDoc(doc(db, 'users', user.uid));
+        if (snap.exists()) {
+          setUserRole(snap.data().role || null);
+        }
+      } catch (err) {
+        console.error('Error loading user role for navbar:', err);
+      }
+    });
+    return () => unsubscribe();
+  }, []);
 
   const handleSignOut = async () => {
     try {
@@ -21,34 +44,40 @@ const Navbar = () => {
     {
       name: 'Dashboard',
       icon: <LayoutDashboard className="h-5 w-5" />,
-      path: '/dashboard'
+      path: '/dashboard',
+      visible: true,
     },
     {
       name: 'Projects',
       icon: <FolderKanban className="h-5 w-5" />,
-      path: '/projects'
+      path: '/projects',
+      visible: true,
     },
     {
       name: 'Users',
       icon: <Users className="h-5 w-5" />,
-      path: '/users'
+      path: '/users',
+      visible: true,
     },
     {
       name: 'Leave',
       icon: <CalendarDays className="h-5 w-5" />,
-      path: '/leave'
+      path: '/leave',
+      visible: true,
     },
     {
       name: 'Admin',
       icon: <Shield className="h-5 w-5" />,
-      path: '/admin'
+      path: '/admin',
+      visible: userRole === 'admin' || userRole === 'manager',
     },
     {
       name: 'Super Admin',
       icon: <Shield className="h-5 w-5" />,
-      path: '/superadmin'
-    }
-  ];
+      path: '/superadmin',
+      visible: userEmail === 'harshbhushandixit@gmail.com' || userRole === 'ceo',
+    },
+  ].filter(item => item.visible);
 
   return (
     <nav className="fixed inset-y-0 left-0 w-64 bg-white shadow-lg flex flex-col z-50">

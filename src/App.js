@@ -52,12 +52,14 @@ function App(){
   );
   const SuperAdminRoute = ({ children }) => {
     if (loading) return <LoadingSpinner />;
-    return user?.email === 'harshbhushandixit@gmail.com' ? children : <Navigate to="/dashboard" replace />;
+    const isSuperAdminEmail = user?.email === 'harshbhushandixit@gmail.com';
+    const isCeoRole = userRole === 'ceo';
+    return (isSuperAdminEmail || isCeoRole) ? children : <Navigate to="/dashboard" replace />;
   };
 
-  const AdminRoute = ({ children, allowLead }) => {
+  const AdminRoute = ({ children }) => {
     if (loading) return <LoadingSpinner />;
-    if (userRole === 'admin' || (allowLead && userRole === 'lead')) return children;
+    if (userRole === 'admin' || userRole === 'manager') return children;
     return <Navigate to="/dashboard" replace />;
   };
 
@@ -80,7 +82,7 @@ function App(){
       <Route path="/projects" element={<ProjectsPage/>} />
       <Route path="/superadmin" element={<SuperAdminDashboard />} />
       <Route path="/signup" element={<SignupPage />} />
-      <Route path="/project" element={ <AdminRoute allowLead><ProjectsPage /></AdminRoute>}/>
+      <Route path="/project" element={ <AdminRoute><ProjectsPage /></AdminRoute>}/>
       <Route  path="/signup" element={ <PublicRoute> <SignupPage /></PublicRoute>}/>
       <Route path="/"element={ <PublicRoute> <Login /></PublicRoute>} />
       <Route path="/leave" element={<ProtectedRoute> <LeaveApplicationPage /></ProtectedRoute>} />
