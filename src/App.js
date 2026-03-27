@@ -15,6 +15,7 @@ import { auth, db } from './firebase';
 // import { LoadingSpinner } from './loading';
 import Lobby from './screens/Lobby';
 import Room from './screens/Room';  
+import VideoCallRedirect from './video';
 
 
 
@@ -88,6 +89,7 @@ function App(){
       <Route path="/leave" element={<ProtectedRoute> <LeaveApplicationPage /></ProtectedRoute>} />
       <Route path="/admin" element={ <AdminRoute> <AdminPage /> </AdminRoute>}/>
       <Route path="/dashboard" element={ <ProtectedRoute> <Dashboard /> </ProtectedRoute> }/>
+     <Route path="/video-call"element={<ProtectedRoute><VideoCallRedirect /></ProtectedRoute>}/>
       <Route path="/superadmin" element={ <SuperAdminRoute> <RoleBasedDashboard /></SuperAdminRoute>}/>
       <Route path="/lobby" element={<Lobby />} />
       <Route path="/room/:roomId" element={<Room />} />

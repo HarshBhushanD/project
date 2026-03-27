@@ -1,32 +1,62 @@
 import React, { useState, useEffect } from 'react';
-import { collection, query, onSnapshot } from 'firebase/firestore';
-import { db } from './firebase';
+import { collection, query, onSnapshot, where, doc, getDoc } from 'firebase/firestore';
+import { auth, db } from './firebase';
 import Navbar from './navbar';
 
 const UsersList = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [companyName, setCompanyName] = useState(null);
 
   useEffect(() => {
-    // Query for all users
-    const q = query(collection(db, "users"));
-    
-    // Set up real-time listener
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const usersList = [];
-      querySnapshot.forEach((doc) => {
-        usersList.push({ id: doc.id, ...doc.data() });
-      });
-      console.log("Fetched users:", usersList); // Debug log
-      setUsers(usersList);
-      setLoading(false);
-    }, (error) => {
-      console.error("Error fetching users:", error);
-      setLoading(false);
-    });
+    let unsubscribeUsers = null;
 
-    return () => unsubscribe();
+    const loadForCurrentUser = async () => {
+      try {
+        const currentUser = auth.currentUser;
+        if (!currentUser) {
+          setLoading(false);
+          return;
+        }
+
+        const userSnap = await getDoc(doc(db, 'users', currentUser.uid));
+        const company = userSnap.exists() ? (userSnap.data().companyName || null) : null;
+        setCompanyName(company);
+
+        if (!company || !company.trim()) {
+          setUsers([]);
+          setLoading(false);
+          return;
+        }
+
+        const q = query(
+          collection(db, 'users'),
+          where('companyName', '==', company.trim())
+        );
+
+        unsubscribeUsers = onSnapshot(q, (querySnapshot) => {
+          const usersList = [];
+          querySnapshot.forEach((d) => {
+            usersList.push({ id: d.id, ...d.data() });
+          });
+          setUsers(usersList);
+          setLoading(false);
+        }, (error) => {
+          console.error("Error fetching users:", error);
+          setLoading(false);
+        });
+      } catch (err) {
+        console.error('Error loading users for company:', err);
+        setLoading(false);
+      }
+    };
+
+    loadForCurrentUser();
+
+    return () => {
+      if (unsubscribeUsers) unsubscribeUsers();
+    };
   }, []);
 
   // Filter users based on search term
@@ -52,7 +82,14 @@ const UsersList = () => {
     <div className="p-6 pl-64">
       <div className="max-w-6xl mx-auto">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold">User Management Dashboard</h1>
+          <div>
+            <h1 className="text-2xl font-bold">User Management Dashboard</h1>
+            {companyName && (
+              <p className="text-sm text-gray-500 mt-1">
+                Company: {companyName}
+              </p>
+            )}
+          </div>
           <span className="text-gray-600">Total Users: {users.length}</span>
         </div>
 
