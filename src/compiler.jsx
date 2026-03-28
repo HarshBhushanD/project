@@ -94,7 +94,7 @@ const CompilerPage = () => {
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-wider text-indigo-600">IDE</p>
                   <h1 className="text-2xl font-bold tracking-tight text-slate-900">Online compiler</h1>
-                  <p className="mt-1 text-sm text-slate-600">Monaco editor + Judge0 · run snippets in the browser</p>
+                  <p className="mt-1 text-sm text-slate-600">Run snippets in the browser</p>
                 </div>
               </div>
               <div className="flex flex-wrap items-center gap-3">

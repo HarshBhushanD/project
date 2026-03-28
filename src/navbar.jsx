@@ -72,6 +72,12 @@ const Navbar = () => {
       visible: true,
     },
     {
+      name: 'Video Call',
+      icon: <Code2 className="h-5 w-5" />,
+      path: '/video-call',
+      visible: true,
+    },
+    {
       name: 'Admin',
       icon: <Shield className="h-5 w-5" />,
       path: '/admin',
