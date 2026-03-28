@@ -17,6 +17,7 @@ import Lobby from './screens/Lobby';
 import Room from './screens/Room';  
 import VideoCallRedirect from './video';
 import CompilerPage from './compiler';
+import Mom from './mom';
 
 
 
@@ -91,9 +92,10 @@ function App(){
       <Route path="/compiler" element={<ProtectedRoute><CompilerPage /></ProtectedRoute>} />
       <Route path="/admin" element={ <AdminRoute> <AdminPage /> </AdminRoute>}/>
       <Route path="/dashboard" element={ <ProtectedRoute> <Dashboard /> </ProtectedRoute> }/>
-     <Route path="/video-call"element={<ProtectedRoute><VideoCallRedirect /></ProtectedRoute>}/>
+      <Route path="/video-call"element={<ProtectedRoute><VideoCallRedirect /></ProtectedRoute>}/>
       <Route path="/superadmin" element={ <SuperAdminRoute> <RoleBasedDashboard /></SuperAdminRoute>}/>
       <Route path="/lobby" element={<Lobby />} />
+      <Route path="/mom" element={<Mom />} />
       <Route path="/room/:roomId" element={<Room />} />
     </Routes>
    </BrowserRouter>

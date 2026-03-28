@@ -78,16 +78,24 @@ const Navbar = () => {
       visible: true,
     },
     {
+      name: 'M.O.M.',
+      icon: <Code2 className="h-5 w-5" />,
+      path: '/mom',
+      visible: true,
+    },
+    {
       name: 'Admin',
       icon: <Shield className="h-5 w-5" />,
       path: '/admin',
-      visible: userRole === 'admin' || userRole === 'manager',
+      visible: true,
+    //   visible: userRole === 'admin' || userRole === 'manager',
     },
     {
       name: 'Super Admin',
       icon: <Shield className="h-5 w-5" />,
       path: '/superadmin',
-      visible: userEmail === 'harshbhushandixit@gmail.com' || userRole === 'ceo',
+      visible: true,
+      // visible: userEmail === 'harshbhushandixit@gmail.com' || userRole === 'ceo',
     },
   ].filter(item => item.visible);
 
