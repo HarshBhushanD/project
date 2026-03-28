@@ -111,31 +111,34 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="ui-page-main min-h-screen">
       <Navbar />
-      <header className="bg-white shadow pl-64">
-        <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8 flex justify-between items-center">
-          <h1 className="text-3xl font-bold text-gray-900">Leave Management Dashboard</h1>
+      <header className="border-b border-slate-200/80 bg-white/90 pl-64 shadow-soft backdrop-blur-sm">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-5 sm:px-6 lg:px-8">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wider text-indigo-600">Admin</p>
+            <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">Leave management</h1>
+          </div>
           <button
             onClick={handleLogout}
-            className="flex items-center px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700"
+            className="inline-flex items-center rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white shadow-soft transition hover:bg-slate-800"
           >
-            <LogOut className="w-4 h-4 mr-2" />
+            <LogOut className="mr-2 h-4 w-4" />
             Logout
           </button>
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8 pl-64">
-        <div className="flex space-x-4 mb-6 border-b">
+      <div className="mx-auto max-w-7xl py-8 pl-64 pr-4 sm:px-6 lg:px-8">
+        <div className="mb-6 flex gap-1 border-b border-slate-200">
           {tabs.map(tab => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`py-2 px-4 ${
+              className={`relative px-4 py-3 text-sm font-medium transition ${
                 activeTab === tab.id
-                  ? 'border-b-2 border-blue-500 text-blue-600'
-                  : 'text-gray-500 hover:text-gray-700'
+                  ? 'text-indigo-600 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:rounded-full after:bg-indigo-600'
+                  : 'text-slate-500 hover:text-slate-800'
               }`}
             >
               {tab.label}
@@ -144,11 +147,11 @@ const AdminDashboard = () => {
         </div>
 
         {loading ? (
-          <div className="flex justify-center py-8">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+          <div className="flex justify-center py-16">
+            <div className="h-12 w-12 animate-spin rounded-full border-2 border-slate-200 border-t-indigo-600" />
           </div>
         ) : (
-          <div className="bg-white rounded-lg shadow overflow-x-auto">
+          <div className="ui-card overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>

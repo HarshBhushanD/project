@@ -16,6 +16,7 @@ import { auth, db } from './firebase';
 import Lobby from './screens/Lobby';
 import Room from './screens/Room';  
 import VideoCallRedirect from './video';
+import CompilerPage from './compiler';
 
 
 
@@ -87,6 +88,7 @@ function App(){
       <Route  path="/signup" element={ <PublicRoute> <SignupPage /></PublicRoute>}/>
       <Route path="/"element={ <PublicRoute> <Login /></PublicRoute>} />
       <Route path="/leave" element={<ProtectedRoute> <LeaveApplicationPage /></ProtectedRoute>} />
+      <Route path="/compiler" element={<ProtectedRoute><CompilerPage /></ProtectedRoute>} />
       <Route path="/admin" element={ <AdminRoute> <AdminPage /> </AdminRoute>}/>
       <Route path="/dashboard" element={ <ProtectedRoute> <Dashboard /> </ProtectedRoute> }/>
      <Route path="/video-call"element={<ProtectedRoute><VideoCallRedirect /></ProtectedRoute>}/>

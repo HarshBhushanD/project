@@ -771,70 +771,74 @@ const ProjectsPage = () => {
     return (
       <>
         <Navbar />
-        <div className="min-h-screen bg-gray-50 p-4 pl-64 flex items-center justify-center">
-          <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+        <div className="ui-page-main ml-64 flex min-h-screen items-center justify-center">
+          <Loader2 className="h-10 w-10 animate-spin text-indigo-600" />
         </div>
       </>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pl-64">
+    <div className="ui-page-main pl-64">
       <Navbar />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         {error && (
-          <div className="bg-red-50 text-red-600 p-4 rounded-md mb-4">
+          <div className="mb-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
             {error}
           </div>
         )}
 
         {!loading && userCompanyName === null && (
-          <div className="bg-amber-50 text-amber-800 p-4 rounded-md mb-4">
+          <div className="mb-4 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
             Your account has no company set. You can only view and create projects after your profile includes a company name.
           </div>
         )}
         
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-semibold text-gray-900">Projects</h1>
+        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wider text-indigo-600">Work</p>
+            <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">Projects</h1>
+            <p className="mt-1 text-sm text-slate-600">Manage projects and tasks for your company.</p>
+          </div>
           <button
             onClick={() => setIsAddingProject(true)}
             disabled={!userCompanyName || !userCompanyName.trim()}
-            className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="ui-btn-primary inline-flex items-center gap-2 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            <Plus className="h-5 w-5 mr-2" />
-            New Project
+            <Plus className="h-5 w-5" />
+            New project
           </button>
         </div>
   
         {isAddingProject && (
-          <div className="bg-white p-6 rounded-lg shadow mb-6">
+          <div className="ui-card mb-6 p-6 sm:p-8">
             <form onSubmit={handleAddProject}>
               <div className="grid grid-cols-1 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Project Name</label>
+                  <label className="block text-sm font-medium text-slate-700">Project Name</label>
                   <input
                     type="text"
                     value={newProject.name}
                     onChange={(e) => setNewProject({ ...newProject, name: e.target.value })}
-                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2"
+                    className="ui-input mt-1"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Description</label>
+                  <label className="block text-sm font-medium text-slate-700">Description</label>
                   <textarea
                     value={newProject.description}
                     onChange={(e) => setNewProject({ ...newProject, description: e.target.value })}
-                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2"
+                    className="ui-input mt-1 min-h-[88px]"
                     rows="3"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Project Lead</label>
+                  <label className="block text-sm font-medium text-slate-700">Project Lead</label>
                   <select
                     value={newProject.leadId}
                     onChange={(e) => setNewProject({ ...newProject, leadId: e.target.value })}
-                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2"
+                    className="ui-input mt-1"
                     required
                   >
                     <option value="">Select Lead</option>
@@ -846,11 +850,11 @@ const ProjectsPage = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Assigned To</label>
+                  <label className="block text-sm font-medium text-slate-700">Assigned To</label>
                   <select
                     value={newProject.assignedTo}
                     onChange={(e) => setNewProject({ ...newProject, assignedTo: e.target.value })}
-                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2"
+                    className="ui-input mt-1"
                     required
                   >
                     <option value="">Select User</option>
@@ -862,17 +866,17 @@ const ProjectsPage = () => {
                   </select>
                 </div>
               </div>
-              <div className="mt-4 flex justify-end space-x-3">
+              <div className="mt-4 flex justify-end gap-3">
                 <button
                   type="button"
                   onClick={() => setIsAddingProject(false)}
-                  className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                  className="ui-btn-secondary"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                  className="ui-btn-primary"
                 >
                   Create Project
                 </button>
@@ -887,8 +891,8 @@ const ProjectsPage = () => {
               <div
                 key={project.id}
                 onClick={() => setSelectedProject(project)}
-                className={`p-4 bg-white rounded-lg shadow cursor-pointer ${
-                  selectedProject?.id === project.id ? 'ring-2 ring-blue-500' : ''
+                className={`ui-card cursor-pointer p-4 transition hover:shadow-soft-lg ${
+                  selectedProject?.id === project.id ? 'ring-2 ring-indigo-500' : ''
                 }`}
               >
                 <div className="flex justify-between items-start">
@@ -916,17 +920,17 @@ const ProjectsPage = () => {
   
           <div className="md:col-span-2">
             {selectedProject ? (
-              <div className="bg-white p-6 rounded-lg shadow">
-                <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-xl font-semibold text-gray-900">
-                    {selectedProject.name} - Tasks
+              <div className="ui-card p-6 sm:p-8">
+                <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <h2 className="text-xl font-bold text-slate-900">
+                    {selectedProject.name} — Tasks
                   </h2>
                   <button
                     onClick={() => setIsAddingTask(true)}
-                    className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                    className="ui-btn-primary inline-flex items-center gap-2"
                   >
-                    <Plus className="h-5 w-5 mr-2" />
-                    New Task
+                    <Plus className="h-5 w-5" />
+                    New task
                   </button>
                 </div>
   
@@ -935,30 +939,30 @@ const ProjectsPage = () => {
                     <form onSubmit={handleAddTask}>
                       <div className="grid grid-cols-1 gap-4">
                         <div>
-                          <label className="block text-sm font-medium text-gray-700">Task Title</label>
+                          <label className="block text-sm font-medium text-slate-700">Task Title</label>
                           <input
                             type="text"
                             value={newTask.title}
                             onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
-                            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2"
+                            className="ui-input mt-1"
                             required
                           />
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-700">Description</label>
+                          <label className="block text-sm font-medium text-slate-700">Description</label>
                           <textarea
                             value={newTask.description}
                             onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
-                            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2"
+                            className="ui-input mt-1 min-h-[80px]"
                             rows="3"
                           />
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-700">Assigned To</label>
+                          <label className="block text-sm font-medium text-slate-700">Assigned To</label>
                           <select
                             value={newTask.assignedTo}
                             onChange={(e) => setNewTask({ ...newTask, assignedTo: e.target.value })}
-                            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2"
+                            className="ui-input mt-1"
                             required
                           >
                             <option value="">Select User</option>
@@ -970,26 +974,26 @@ const ProjectsPage = () => {
                           </select>
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-700">Due Date</label>
+                          <label className="block text-sm font-medium text-slate-700">Due Date</label>
                           <input
                             type="date"
                             value={newTask.dueDate}
                             onChange={(e) => setNewTask({ ...newTask, dueDate: e.target.value })}
-                            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2"
+                            className="ui-input mt-1"
                           />
                         </div>
                       </div>
-                      <div className="mt-4 flex justify-end space-x-3">
+                      <div className="mt-4 flex justify-end gap-3">
                         <button
                           type="button"
                           onClick={() => setIsAddingTask(false)}
-                          className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                          className="ui-btn-secondary"
                         >
                           Cancel
                         </button>
                         <button
                           type="submit"
-                          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                          className="ui-btn-primary"
                         >
                           Add Task
                         </button>
@@ -1000,7 +1004,7 @@ const ProjectsPage = () => {
   
                 <div className="space-y-4">
                   {tasks.map(task => (
-                    <div key={task.id} className="flex items-start justify-between p-4 border rounded-lg">
+                    <div key={task.id} className="flex items-start justify-between rounded-xl border border-slate-200/80 bg-slate-50/50 p-4">
                       <div className="flex-1">
                         <div className="flex items-center">
                           <button
@@ -1040,10 +1044,10 @@ const ProjectsPage = () => {
                 </div>
               </div>
             ) : (
-              <div className="bg-gray-50 p-12 rounded-lg border-2 border-dashed border-gray-300 text-center">
-                <FolderOpen className="mx-auto h-12 w-12 text-gray-400" />
-                <h3 className="mt-2 text-sm font-medium text-gray-900">No project selected</h3>
-                <p className="mt-1 text-sm text-gray-500">
+              <div className="rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50/80 p-12 text-center">
+                <FolderOpen className="mx-auto h-12 w-12 text-slate-400" />
+                <h3 className="mt-2 text-sm font-semibold text-slate-900">No project selected</h3>
+                <p className="mt-1 text-sm text-slate-500">
                   Select a project from the list to view its tasks
                 </p>
               </div>

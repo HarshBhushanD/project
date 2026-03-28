@@ -82,8 +82,8 @@ const Dashboard = () => {
     return (
       <>
         <Navbar />
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center ml-64">
-          <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+        <div className="ui-page-main ml-64 flex min-h-screen items-center justify-center">
+          <Loader2 className="h-10 w-10 animate-spin text-indigo-600" />
         </div>
       </>
     );
@@ -97,93 +97,106 @@ const Dashboard = () => {
   return (
   <>
   <Navbar/>
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-8 ml-64">
-      <div className="max-w-7xl mx-auto">
-        {/* Dashboard Header */}
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-          <p className="mt-2 text-gray-600">Welcome back! Here's an overview of your projects.</p>
+    <div className="ui-page-main ml-64 p-4 sm:p-6 lg:p-8">
+      <div className="mx-auto max-w-7xl">
+        <div className="ui-card mb-8 overflow-hidden p-6 sm:p-8">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-indigo-600">Overview</p>
+              <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">Dashboard</h1>
+              <p className="mt-2 max-w-xl text-sm text-slate-600">
+                Welcome back! Here&apos;s an overview of your projects.
+              </p>
+            </div>
+          </div>
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex items-center justify-between">
+        <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="ui-card p-6">
+            <div className="flex items-start justify-between gap-3">
               <div>
-                <p className="text-sm font-medium text-gray-600">Total Projects</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Total</p>
+                <p className="mt-1 text-3xl font-bold tabular-nums text-slate-900">{stats.total}</p>
+                <p className="mt-1 text-sm text-slate-600">All projects</p>
               </div>
-              <FolderOpen className="h-8 w-8 text-blue-600" />
+              <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-100 text-indigo-600">
+                <FolderOpen className="h-6 w-6" />
+              </span>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex items-center justify-between">
+          <div className="ui-card p-6">
+            <div className="flex items-start justify-between gap-3">
               <div>
-                <p className="text-sm font-medium text-gray-600">Active Projects</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.active}</p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Active</p>
+                <p className="mt-1 text-3xl font-bold tabular-nums text-slate-900">{stats.active}</p>
+                <p className="mt-1 text-sm text-slate-600">In progress</p>
               </div>
-              <Clock className="h-8 w-8 text-yellow-600" />
+              <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-100 text-amber-700">
+                <Clock className="h-6 w-6" />
+              </span>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex items-center justify-between">
+          <div className="ui-card p-6">
+            <div className="flex items-start justify-between gap-3">
               <div>
-                <p className="text-sm font-medium text-gray-600">Completed Projects</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.completed}</p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Completed</p>
+                <p className="mt-1 text-3xl font-bold tabular-nums text-slate-900">{stats.completed}</p>
+                <p className="mt-1 text-sm text-slate-600">Shipped</p>
               </div>
-              <CheckCircle2 className="h-8 w-8 text-green-600" />
+              <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-700">
+                <CheckCircle2 className="h-6 w-6" />
+              </span>
             </div>
           </div>
         </div>
 
         {error && (
-          <div className="bg-red-50 text-red-500 p-4 rounded-lg mb-6">
+          <div className="mb-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
             {error}
           </div>
         )}
 
-        {/* Recent Projects */}
-        <div className="bg-white rounded-lg shadow">
-          <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
-            <h2 className="text-lg font-medium text-gray-900">Recent Projects</h2>
-            <div className="flex space-x-2 text-sm">
+        <div className="ui-card overflow-hidden">
+          <div className="flex flex-col gap-4 border-b border-slate-200/80 px-6 py-4 sm:flex-row sm:items-center sm:justify-between">
+            <h2 className="text-lg font-semibold text-slate-900">Recent projects</h2>
+            <div className="flex flex-wrap gap-2 text-sm">
               <button
                 onClick={() => setStatusFilter('all')}
-                className={`px-3 py-1 rounded-full border ${
+                className={`rounded-full border px-3 py-1.5 font-medium transition ${
                   statusFilter === 'all'
-                    ? 'bg-blue-50 text-blue-700 border-blue-200'
-                    : 'text-gray-600 border-gray-200 hover:bg-gray-50'
+                    ? 'border-indigo-200 bg-indigo-50 text-indigo-800'
+                    : 'border-slate-200 text-slate-600 hover:bg-slate-50'
                 }`}
               >
                 All
               </button>
               <button
                 onClick={() => setStatusFilter('active')}
-                className={`px-3 py-1 rounded-full border ${
+                className={`rounded-full border px-3 py-1.5 font-medium transition ${
                   statusFilter === 'active'
-                    ? 'bg-yellow-50 text-yellow-700 border-yellow-200'
-                    : 'text-gray-600 border-gray-200 hover:bg-gray-50'
+                    ? 'border-amber-200 bg-amber-50 text-amber-900'
+                    : 'border-slate-200 text-slate-600 hover:bg-slate-50'
                 }`}
               >
                 Active
               </button>
               <button
                 onClick={() => setStatusFilter('completed')}
-                className={`px-3 py-1 rounded-full border ${
+                className={`rounded-full border px-3 py-1.5 font-medium transition ${
                   statusFilter === 'completed'
-                    ? 'bg-green-50 text-green-700 border-green-200'
-                    : 'text-gray-600 border-gray-200 hover:bg-gray-50'
+                    ? 'border-emerald-200 bg-emerald-50 text-emerald-900'
+                    : 'border-slate-200 text-slate-600 hover:bg-slate-50'
                 }`}
               >
                 Completed
               </button>
             </div>
           </div>
-          <div className="divide-y divide-gray-200">
+          <div className="divide-y divide-slate-100">
             {filteredProjects.length === 0 ? (
-              <div className="p-6 text-center text-gray-500">
+              <div className="p-8 text-center text-sm text-slate-500">
                 {projects.length === 0
                   ? 'No projects found. Create your first project to get started.'
                   : 'No projects match this filter.'}
@@ -192,13 +205,13 @@ const Dashboard = () => {
               filteredProjects.map(project => (
                 <div 
                   key={project.id}
-                  className="p-6 hover:bg-gray-50 transition-colors cursor-pointer"
+                  className="cursor-pointer p-6 transition-colors hover:bg-slate-50/80"
                   onClick={() => navigate(`/projects/${project.id}`)}
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <div className="flex items-center space-x-3">
-                        <h3 className="text-lg font-medium text-gray-900">{project.name}</h3>
+                        <h3 className="text-lg font-semibold text-slate-900">{project.name}</h3>
                         <span 
                           className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
                             ${project.status === 'completed' ? 'bg-green-100 text-green-800' : 
@@ -233,9 +246,9 @@ const Dashboard = () => {
         <div className="mt-8 flex justify-end">
           <button
             onClick={() => navigate('/projects')}
-            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            className="ui-btn-primary px-5 py-2.5"
           >
-            View All Projects
+            View all projects
           </button>
         </div>
       </div>

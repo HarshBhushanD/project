@@ -707,13 +707,14 @@ const LeaveApplicationPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4">
+    <div className="ui-page-main ml-64 min-h-screen px-4 py-8 sm:px-8">
       <Navbar />
-      <div className="max-w-2xl mx-auto pl-64">
-        <div className="bg-white rounded-lg shadow-md p-8">
-          <h2 className="text-2xl font-bold mb-6">Apply for Leave</h2>
+      <div className="mx-auto max-w-2xl">
+        <div className="ui-card p-8 sm:p-10">
+          <p className="text-xs font-semibold uppercase tracking-wider text-indigo-600">Time off</p>
+          <h2 className="mb-6 mt-1 text-2xl font-bold tracking-tight text-slate-900">Apply for leave</h2>
 
-          <div className="mb-6 grid grid-cols-2 gap-4">
+          <div className="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
             <Alert className="bg-blue-50">
               <div className="font-semibold mb-1">Sick Leave Balance</div>
               <p className="text-sm">
@@ -757,7 +758,7 @@ const LeaveApplicationPage = () => {
               </label>
               <select
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="ui-input"
                 value={formData.leaveType}
                 onChange={(e) => {
                   setFormData({ ...formData, leaveType: e.target.value });
@@ -784,7 +785,7 @@ const LeaveApplicationPage = () => {
                 <input
                   type="date"
                   required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="ui-input"
                   value={formData.startDate}
                   onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
                   min={new Date().toISOString().split('T')[0]}
@@ -799,7 +800,7 @@ const LeaveApplicationPage = () => {
                 <input
                   type="date"
                   required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="ui-input"
                   value={formData.endDate}
                   onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
                   min={formData.startDate || new Date().toISOString().split('T')[0]}
@@ -815,12 +816,12 @@ const LeaveApplicationPage = () => {
             )}
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="mb-1 block text-sm font-medium text-slate-700">
                 Reason for Leave
               </label>
               <textarea
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 h-32"
+                className="ui-input min-h-[128px]"
                 value={formData.reason}
                 onChange={(e) => setFormData({ ...formData, reason: e.target.value })}
                 placeholder="Please provide a detailed reason for your leave request..."
@@ -828,11 +829,11 @@ const LeaveApplicationPage = () => {
               />
             </div>
 
-            <div className="flex items-center justify-end space-x-4">
+            <div className="flex items-center justify-end">
               <button
                 type="submit"
                 disabled={loading}
-                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="ui-btn-primary px-6 py-2.5 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {loading ? 'Submitting...' : 'Submit Application'}
               </button>

@@ -69,8 +69,8 @@ const UsersList = () => {
     return (
       <>
         <Navbar />
-        <div className="flex justify-center items-center h-screen pl-64">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+        <div className="ui-page-main ml-64 flex h-screen items-center justify-center">
+          <div className="h-10 w-10 animate-spin rounded-full border-2 border-slate-200 border-t-indigo-600" />
         </div>
       </>
     );
@@ -79,53 +79,54 @@ const UsersList = () => {
   return (
     <>
     <Navbar />
-    <div className="p-6 pl-64">
-      <div className="max-w-6xl mx-auto">
-        <div className="flex justify-between items-center mb-6">
+    <div className="ui-page-main ml-64 p-6 sm:p-8">
+      <div className="mx-auto max-w-6xl">
+        <div className="ui-card mb-8 flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold">User Management Dashboard</h1>
+            <p className="text-xs font-semibold uppercase tracking-wider text-indigo-600">Directory</p>
+            <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-900">Users</h1>
             {companyName && (
-              <p className="text-sm text-gray-500 mt-1">
-                Company: {companyName}
+              <p className="mt-1 text-sm text-slate-600">
+                Company: <span className="font-medium text-slate-800">{companyName}</span>
               </p>
             )}
           </div>
-          <span className="text-gray-600">Total Users: {users.length}</span>
+          <span className="inline-flex items-center rounded-full bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700">
+            Total: {users.length}
+          </span>
         </div>
 
-        {/* Search Bar */}
         <div className="mb-6">
           <input
             type="text"
             placeholder="Search users by name or email..."
-            className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="ui-input"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
 
-        {/* Users Table */}
-        <div className="bg-white rounded-lg shadow overflow-hidden">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+        <div className="ui-card overflow-hidden">
+          <table className="min-w-full divide-y divide-slate-100">
+            <thead className="bg-slate-50/90">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
                   Name
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
                   Email
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
                   Role
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
                   Date Joined
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="divide-y divide-slate-100 bg-white">
               {filteredUsers.map((user) => (
-                <tr key={user.id} className="hover:bg-gray-50">
+                <tr key={user.id} className="transition hover:bg-slate-50/80">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm font-medium text-gray-900">
                       {user.name || 'N/A'}
@@ -159,7 +160,7 @@ const UsersList = () => {
 
           {/* No Users Message */}
           {filteredUsers.length === 0 && (
-            <div className="text-center py-8 text-gray-500">
+            <div className="py-10 text-center text-sm text-slate-500">
               No users found
             </div>
           )}
