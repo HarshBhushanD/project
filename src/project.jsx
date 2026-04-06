@@ -505,6 +505,565 @@
 
 
 
+// import React, { useState, useEffect } from 'react';
+// import { db, auth } from './firebase';
+// import { onAuthStateChanged } from 'firebase/auth';
+// import { collection, getDocs, addDoc, deleteDoc, doc, query, orderBy, where, updateDoc, getDoc } from 'firebase/firestore';
+// import { Loader2, Plus, Trash2, FolderOpen, Users, CheckCircle2, XCircle } from 'lucide-react';
+// import Navbar from './navbar';
+
+// const ProjectsPage = () => {
+//   const [projects, setProjects] = useState([]);
+//   const [users, setUsers] = useState([]);
+//   const [userCompanyName, setUserCompanyName] = useState(null);
+//   const [loading, setLoading] = useState(true);
+//   const [error, setError] = useState('');
+//   const [isAddingProject, setIsAddingProject] = useState(false);
+//   const [selectedProject, setSelectedProject] = useState(null);
+//   const [tasks, setTasks] = useState([]);
+//   const [isAddingTask, setIsAddingTask] = useState(false);
+  
+//   const [newProject, setNewProject] = useState({
+//     name: '',
+//     description: '',
+//     leadId: '',
+//     assignedTo: '',
+//     members: []
+//   });
+
+//   const [newTask, setNewTask] = useState({
+//     title: '',
+//     description: '',
+//     assignedTo: '',
+//     dueDate: '',
+//     status: 'pending'
+//   });
+
+//   useEffect(() => {
+//     let mounted = true;
+//     const unsubscribe = onAuthStateChanged(auth, async (user) => {
+//       if (!mounted) return;
+//       if (!user) {
+//         setLoading(false);
+//         return;
+//       }
+//       try {
+//         const userSnap = await getDoc(doc(db, 'users', user.uid));
+//         const companyName = userSnap.exists() ? (userSnap.data().companyName || null) : null;
+//         if (mounted) setUserCompanyName(companyName);
+//         await fetchUsers(companyName);
+//         await fetchProjects(companyName);
+//       } catch (err) {
+//         console.error('Error loading user or data:', err);
+//         if (mounted) setError('Failed to load data');
+//       } finally {
+//         if (mounted) setLoading(false);
+//       }
+//     });
+//     return () => {
+//       mounted = false;
+//       unsubscribe();
+//     };
+//   }, []);
+
+//   useEffect(() => {
+//     if (selectedProject) {
+//       fetchTasks(selectedProject.id);
+//     }
+//   }, [selectedProject]);
+
+//   const fetchUsers = async (companyName) => {
+//     try {
+//       const querySnapshot = await getDocs(collection(db, 'users'));
+//       let usersData = querySnapshot.docs.map(d => ({
+//         id: d.id,
+//         ...d.data()
+//       }));
+//       if (companyName) {
+//         usersData = usersData.filter(u => (u.companyName || '').trim() === companyName.trim());
+//       }
+//       setUsers(usersData);
+//     } catch (err) {
+//       console.error('Error fetching users:', err);
+//     }
+//   };
+
+//   const getUserId = (user) => user?.uid || user?.id || '';
+//   const getUserLabel = (user) => user?.name || user?.displayName || user?.email || 'Unnamed User';
+
+//   const fetchProjects = async (companyName) => {
+//     try {
+//       let q;
+//       if (companyName && companyName.trim()) {
+//         q = query(
+//           collection(db, 'projects'),
+//           where('companyName', '==', companyName.trim()),
+//           orderBy('createdAt', 'desc')
+//         );
+//       } else {
+//         q = query(collection(db, 'projects'), orderBy('createdAt', 'desc'));
+//       }
+//       const querySnapshot = await getDocs(q);
+//       const projectsData = querySnapshot.docs.map(d => ({
+//         id: d.id,
+//         ...d.data()
+//       }));
+//       if (companyName && companyName.trim()) {
+//         setProjects(projectsData);
+//       } else {
+//         setProjects([]);
+//       }
+//       setError('');
+//     } catch (err) {
+//       console.error('Error fetching projects:', err);
+//       if (err.code === 'firestore/index-not-found' || err.message?.includes('index')) {
+//         setError('Projects index is being set up. Please try again in a moment or create the Firestore index for companyName + createdAt.');
+//       } else {
+//         setError('Failed to load projects');
+//       }
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   const fetchTasks = async (projectId) => {
+//     try {
+//       const q = query(
+//         collection(db, 'tasks'),
+//         where('projectId', '==', projectId),
+//         orderBy('createdAt', 'desc')
+//       );
+//       const querySnapshot = await getDocs(q);
+//       const tasksData = querySnapshot.docs.map(doc => ({
+//         id: doc.id,
+//         ...doc.data()
+//       }));
+//       setTasks(tasksData);
+//     } catch (err) {
+//       console.error('Error fetching tasks:', err);
+//     }
+//   };
+
+//   const handleAddProject = async (e) => {
+//     e.preventDefault();
+//     if (!newProject.name.trim() || !newProject.leadId || !newProject.assignedTo) return;
+//     if (!userCompanyName || !userCompanyName.trim()) {
+//       setError('Your account has no company set. Please update your profile with a company name to create projects.');
+//       return;
+//     }
+
+//     setLoading(true);
+//     try {
+//       const projectData = {
+//         name: newProject.name,
+//         description: newProject.description,
+//         leadId: newProject.leadId,
+//         assignedTo: newProject.assignedTo,
+//         members: newProject.members,
+//         companyName: userCompanyName.trim(),
+//         createdAt: new Date().toISOString(),
+//         status: 'active'
+//       };
+//       const docRef = await addDoc(collection(db, 'projects'), projectData);
+      
+//       setProjects([{
+//         id: docRef.id,
+//         ...newProject,
+//         ...projectData
+//       }, ...projects]);
+      
+//       setNewProject({
+//         name: '',
+//         description: '',
+//         leadId: '',
+//         assignedTo: '',
+//         members: []
+//       });
+//       setIsAddingProject(false);
+//     } catch (err) {
+//       console.error('Error adding project:', err);
+//       setError('Failed to add project');
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   const handleAddTask = async (e) => {
+//     e.preventDefault();
+//     if (!newTask.title.trim() || !newTask.assignedTo || !selectedProject) return;
+
+//     try {
+//       const docRef = await addDoc(collection(db, 'tasks'), {
+//         ...newTask,
+//         projectId: selectedProject.id,
+//         createdAt: new Date().toISOString()
+//       });
+      
+//       setTasks([{
+//         id: docRef.id,
+//         ...newTask,
+//         projectId: selectedProject.id,
+//         createdAt: new Date().toISOString()
+//       }, ...tasks]);
+      
+//       setNewTask({
+//         title: '',
+//         description: '',
+//         assignedTo: '',
+//         dueDate: '',
+//         status: 'pending'
+//       });
+//       setIsAddingTask(false);
+//     } catch (err) {
+//       console.error('Error adding task:', err);
+//     }
+//   };
+
+//   const handleDeleteProject = async (projectId) => {
+//     if (!window.confirm('Are you sure you want to delete this project?')) return;
+
+//     setLoading(true);
+//     try {
+//       await deleteDoc(doc(db, 'projects', projectId));
+//       setProjects(projects.filter(project => project.id !== projectId));
+//       if (selectedProject?.id === projectId) {
+//         setSelectedProject(null);
+//       }
+//     } catch (err) {
+//       console.error('Error deleting project:', err);
+//       setError('Failed to delete project');
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   const handleDeleteTask = async (taskId) => {
+//     if (!window.confirm('Are you sure you want to delete this task?')) return;
+
+//     try {
+//       await deleteDoc(doc(db, 'tasks', taskId));
+//       setTasks(tasks.filter(task => task.id !== taskId));
+//     } catch (err) {
+//       console.error('Error deleting task:', err);
+//     }
+//   };
+
+//   const handleUpdateTaskStatus = async (taskId, currentStatus) => {
+//     try {
+//       const taskRef = doc(db, 'tasks', taskId);
+//       const newStatus = currentStatus === 'completed' ? 'pending' : 'completed';
+      
+//       await updateDoc(taskRef, {
+//         status: newStatus
+//       });
+      
+//       setTasks(tasks.map(task => 
+//         task.id === taskId ? { ...task, status: newStatus } : task
+//       ));
+//     } catch (err) {
+//       console.error('Error updating task status:', err);
+//     }
+//   };
+
+//   const getUserName = (userId) => {
+//     const user = users.find(u => getUserId(u) === userId);
+//     return user ? getUserLabel(user) : 'Unknown User';
+//   };
+
+//   if (loading && projects.length === 0) {
+//     return (
+//       <>
+//         <Navbar />
+//         <div className="ui-page-main ml-64 flex min-h-screen items-center justify-center">
+//           <Loader2 className="h-10 w-10 animate-spin text-indigo-600" />
+//         </div>
+//       </>
+//     );
+//   }
+
+//   return (
+//     <div className="ui-page-main pl-64">
+//       <Navbar />
+//       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+//         {error && (
+//           <div className="mb-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+//             {error}
+//           </div>
+//         )}
+
+//         {!loading && userCompanyName === null && (
+//           <div className="mb-4 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+//             Your account has no company set. You can only view and create projects after your profile includes a company name.
+//           </div>
+//         )}
+        
+//         <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+//           <div>
+//             <p className="text-xs font-semibold uppercase tracking-wider text-indigo-600">Work</p>
+//             <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">Projects</h1>
+//             <p className="mt-1 text-sm text-slate-600">Manage projects and tasks for your company.</p>
+//           </div>
+//           <button
+//             onClick={() => setIsAddingProject(true)}
+//             disabled={!userCompanyName || !userCompanyName.trim()}
+//             className="ui-btn-primary inline-flex items-center gap-2 disabled:cursor-not-allowed disabled:opacity-50"
+//           >
+//             <Plus className="h-5 w-5" />
+//             New project
+//           </button>
+//         </div>
+  
+//         {isAddingProject && (
+//           <div className="ui-card mb-6 p-6 sm:p-8">
+//             <form onSubmit={handleAddProject}>
+//               <div className="grid grid-cols-1 gap-4">
+//                 <div>
+//                   <label className="block text-sm font-medium text-slate-700">Project Name</label>
+//                   <input
+//                     type="text"
+//                     value={newProject.name}
+//                     onChange={(e) => setNewProject({ ...newProject, name: e.target.value })}
+//                     className="ui-input mt-1"
+//                     required
+//                   />
+//                 </div>
+//                 <div>
+//                   <label className="block text-sm font-medium text-slate-700">Description</label>
+//                   <textarea
+//                     value={newProject.description}
+//                     onChange={(e) => setNewProject({ ...newProject, description: e.target.value })}
+//                     className="ui-input mt-1 min-h-[88px]"
+//                     rows="3"
+//                   />
+//                 </div>
+//                 <div>
+//                   <label className="block text-sm font-medium text-slate-700">Project Lead</label>
+//                   <select
+//                     value={newProject.leadId}
+//                     onChange={(e) => setNewProject({ ...newProject, leadId: e.target.value })}
+//                     className="ui-input mt-1"
+//                     required
+//                   >
+//                     <option value="">Select Lead</option>
+//                     {users.map(user => (
+//                       <option key={getUserId(user)} value={getUserId(user)}>
+//                         {getUserLabel(user)}
+//                       </option>
+//                     ))}
+//                   </select>
+//                 </div>
+//                 <div>
+//                   <label className="block text-sm font-medium text-slate-700">Assigned To</label>
+//                   <select
+//                     value={newProject.assignedTo}
+//                     onChange={(e) => setNewProject({ ...newProject, assignedTo: e.target.value })}
+//                     className="ui-input mt-1"
+//                     required
+//                   >
+//                     <option value="">Select User</option>
+//                     {users.map(user => (
+//                       <option key={getUserId(user)} value={getUserId(user)}>
+//                         {getUserLabel(user)}
+//                       </option>
+//                     ))}
+//                   </select>
+//                 </div>
+//               </div>
+//               <div className="mt-4 flex justify-end gap-3">
+//                 <button
+//                   type="button"
+//                   onClick={() => setIsAddingProject(false)}
+//                   className="ui-btn-secondary"
+//                 >
+//                   Cancel
+//                 </button>
+//                 <button
+//                   type="submit"
+//                   className="ui-btn-primary"
+//                 >
+//                   Create Project
+//                 </button>
+//               </div>
+//             </form>
+//           </div>
+//         )}
+  
+//         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+//           <div className="md:col-span-1 space-y-4">
+//             {projects.map(project => (
+//               <div
+//                 key={project.id}
+//                 onClick={() => setSelectedProject(project)}
+//                 className={`ui-card cursor-pointer p-4 transition hover:shadow-soft-lg ${
+//                   selectedProject?.id === project.id ? 'ring-2 ring-indigo-500' : ''
+//                 }`}
+//               >
+//                 <div className="flex justify-between items-start">
+//                   <div>
+//                     <h3 className="text-lg font-medium text-gray-900">{project.name}</h3>
+//                     <p className="text-sm text-gray-500 mt-1">{project.description}</p>
+//                   </div>
+//                   <button
+//                     onClick={(e) => {
+//                       e.stopPropagation();
+//                       handleDeleteProject(project.id);
+//                     }}
+//                     className="text-gray-400 hover:text-red-600"
+//                   >
+//                     <Trash2 className="h-5 w-5" />
+//                   </button>
+//                 </div>
+//                 <div className="mt-4 flex items-center text-sm text-gray-500">
+//                   <Users className="h-4 w-4 mr-1" />
+//                   <span>{getUserName(project.leadId)}</span>
+//                 </div>
+//               </div>
+//             ))}
+//           </div>
+  
+//           <div className="md:col-span-2">
+//             {selectedProject ? (
+//               <div className="ui-card p-6 sm:p-8">
+//                 <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+//                   <h2 className="text-xl font-bold text-slate-900">
+//                     {selectedProject.name} — Tasks
+//                   </h2>
+//                   <button
+//                     onClick={() => setIsAddingTask(true)}
+//                     className="ui-btn-primary inline-flex items-center gap-2"
+//                   >
+//                     <Plus className="h-5 w-5" />
+//                     New task
+//                   </button>
+//                 </div>
+  
+//                 {isAddingTask && (
+//                   <div className="mb-6">
+//                     <form onSubmit={handleAddTask}>
+//                       <div className="grid grid-cols-1 gap-4">
+//                         <div>
+//                           <label className="block text-sm font-medium text-slate-700">Task Title</label>
+//                           <input
+//                             type="text"
+//                             value={newTask.title}
+//                             onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
+//                             className="ui-input mt-1"
+//                             required
+//                           />
+//                         </div>
+//                         <div>
+//                           <label className="block text-sm font-medium text-slate-700">Description</label>
+//                           <textarea
+//                             value={newTask.description}
+//                             onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
+//                             className="ui-input mt-1 min-h-[80px]"
+//                             rows="3"
+//                           />
+//                         </div>
+//                         <div>
+//                           <label className="block text-sm font-medium text-slate-700">Assigned To</label>
+//                           <select
+//                             value={newTask.assignedTo}
+//                             onChange={(e) => setNewTask({ ...newTask, assignedTo: e.target.value })}
+//                             className="ui-input mt-1"
+//                             required
+//                           >
+//                             <option value="">Select User</option>
+//                             {users.map(user => (
+//                               <option key={getUserId(user)} value={getUserId(user)}>
+//                                 {getUserLabel(user)}
+//                               </option>
+//                             ))}
+//                           </select>
+//                         </div>
+//                         <div>
+//                           <label className="block text-sm font-medium text-slate-700">Due Date</label>
+//                           <input
+//                             type="date"
+//                             value={newTask.dueDate}
+//                             onChange={(e) => setNewTask({ ...newTask, dueDate: e.target.value })}
+//                             className="ui-input mt-1"
+//                           />
+//                         </div>
+//                       </div>
+//                       <div className="mt-4 flex justify-end gap-3">
+//                         <button
+//                           type="button"
+//                           onClick={() => setIsAddingTask(false)}
+//                           className="ui-btn-secondary"
+//                         >
+//                           Cancel
+//                         </button>
+//                         <button
+//                           type="submit"
+//                           className="ui-btn-primary"
+//                         >
+//                           Add Task
+//                         </button>
+//                       </div>
+//                     </form>
+//                   </div>
+//                 )}
+  
+//                 <div className="space-y-4">
+//                   {tasks.map(task => (
+//                     <div key={task.id} className="flex items-start justify-between rounded-xl border border-slate-200/80 bg-slate-50/50 p-4">
+//                       <div className="flex-1">
+//                         <div className="flex items-center">
+//                           <button
+//                             onClick={() => handleUpdateTaskStatus(task.id, task.status)}
+//                             className={`mr-3 ${
+//                               task.status === 'completed' ? 'text-green-500' : 'text-gray-400'
+//                             }`}
+//                           >
+//                             {task.status === 'completed' ? (
+//                               <CheckCircle2 className="h-5 w-5" />
+//                             ) : (
+//                               <XCircle className="h-5 w-5" />
+//                             )}
+//                           </button>
+//                           <div>
+//                             <h4 className="text-lg font-medium text-gray-900">{task.title}</h4>
+//                             <p className="text-sm text-gray-500">{task.description}</p>
+//                             <div className="mt-1 text-sm text-gray-500">
+//                               Assigned to: {getUserName(task.assignedTo)}
+//                             </div>
+//                             {task.dueDate && (
+//                               <div className="mt-1 text-sm text-gray-500">
+//                                 Due: {new Date(task.dueDate).toLocaleDateString()}
+//                               </div>
+//                             )}
+//                           </div>
+//                         </div>
+//                       </div>
+//                       <button
+//                         onClick={() => handleDeleteTask(task.id)}
+//                         className="text-gray-400 hover:text-red-600"
+//                       >
+//                         <Trash2 className="h-5 w-5" />
+//                       </button>
+//                     </div>
+//                   ))}
+//                 </div>
+//               </div>
+//             ) : (
+//               <div className="rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50/80 p-12 text-center">
+//                 <FolderOpen className="mx-auto h-12 w-12 text-slate-400" />
+//                 <h3 className="mt-2 text-sm font-semibold text-slate-900">No project selected</h3>
+//                 <p className="mt-1 text-sm text-slate-500">
+//                   Select a project from the list to view its tasks
+//                 </p>
+//               </div>
+//             )}
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default ProjectsPage;
+
 import React, { useState, useEffect } from 'react';
 import { db, auth } from './firebase';
 import { onAuthStateChanged } from 'firebase/auth';
@@ -551,7 +1110,7 @@ const ProjectsPage = () => {
         const userSnap = await getDoc(doc(db, 'users', user.uid));
         const companyName = userSnap.exists() ? (userSnap.data().companyName || null) : null;
         if (mounted) setUserCompanyName(companyName);
-        await fetchUsers(companyName);
+        await fetchUsers();
         await fetchProjects(companyName);
       } catch (err) {
         console.error('Error loading user or data:', err);
@@ -572,21 +1131,21 @@ const ProjectsPage = () => {
     }
   }, [selectedProject]);
 
-  const fetchUsers = async (companyName) => {
+  const fetchUsers = async () => {
     try {
       const querySnapshot = await getDocs(collection(db, 'users'));
-      let usersData = querySnapshot.docs.map(d => ({
+      const usersData = querySnapshot.docs.map(d => ({
         id: d.id,
+        uid: d.data().uid || d.id,
         ...d.data()
       }));
-      if (companyName) {
-        usersData = usersData.filter(u => (u.companyName || '').trim() === companyName.trim());
-      }
       setUsers(usersData);
     } catch (err) {
       console.error('Error fetching users:', err);
     }
   };
+
+  const getUserLabel = (user) => user?.name || user?.displayName || user?.email || 'Unnamed User';
 
   const fetchProjects = async (companyName) => {
     try {
@@ -763,8 +1322,8 @@ const ProjectsPage = () => {
   };
 
   const getUserName = (userId) => {
-    const user = users.find(u => u.uid === userId);
-    return user ? (user.name || user.email) : 'Unknown User';
+    const user = users.find(u => u.uid === userId || u.id === userId);
+    return user ? getUserLabel(user) : 'Unknown User';
   };
 
   if (loading && projects.length === 0) {
@@ -843,8 +1402,8 @@ const ProjectsPage = () => {
                   >
                     <option value="">Select Lead</option>
                     {users.map(user => (
-                      <option key={user.uid} value={user.uid}>
-                        {user.name || user.email}
+                      <option key={user.uid || user.id} value={user.uid || user.id}>
+                        {getUserLabel(user)}
                       </option>
                     ))}
                   </select>
@@ -859,8 +1418,8 @@ const ProjectsPage = () => {
                   >
                     <option value="">Select User</option>
                     {users.map(user => (
-                      <option key={user.uid} value={user.uid}>
-                        {user.name || user.email}
+                      <option key={user.uid || user.id} value={user.uid || user.id}>
+                        {getUserLabel(user)}
                       </option>
                     ))}
                   </select>
@@ -916,6 +1475,14 @@ const ProjectsPage = () => {
                 </div>
               </div>
             ))}
+
+            {projects.length === 0 && !loading && (
+              <div className="text-center py-12">
+                <FolderOpen className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-gray-900">No projects yet</h3>
+                <p className="text-gray-500">Create a new project to get started</p>
+              </div>
+            )}
           </div>
   
           <div className="md:col-span-2">
@@ -967,8 +1534,8 @@ const ProjectsPage = () => {
                           >
                             <option value="">Select User</option>
                             {users.map(user => (
-                              <option key={user.uid} value={user.uid}>
-                                {user.displayName || user.email}
+                              <option key={user.uid || user.id} value={user.uid || user.id}>
+                                {getUserLabel(user)}
                               </option>
                             ))}
                           </select>
@@ -1041,6 +1608,12 @@ const ProjectsPage = () => {
                       </button>
                     </div>
                   ))}
+
+                  {tasks.length === 0 && (
+                    <div className="text-center py-8">
+                      <p className="text-sm text-slate-500">No tasks yet. Add a task to get started.</p>
+                    </div>
+                  )}
                 </div>
               </div>
             ) : (
